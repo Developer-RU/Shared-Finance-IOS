@@ -3,8 +3,8 @@
 > Free and open-source software. You can use, modify, and distribute this project under the MIT License.
 >
 > Companion repositories:
-> - iOS: https://github.com/Developer-RU/short-finance-ios
-> - Android: https://github.com/Developer-RU/short-finance-android
+> - iOS: https://github.com/Developer-RU/Shared-Finance-IOS
+> - Android: https://github.com/Developer-RU/Shared-Finance-ANDROID
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 ![Platform: iOS](https://img.shields.io/badge/Platform-iOS-000000)
