@@ -7,6 +7,9 @@ struct ParticipantsView: View {
 
     @State private var name = ""
     @State private var contribution = ""
+    @State private var participantPendingDeletion: Participant?
+    @State private var participantPendingRename: Participant?
+    @State private var renamedParticipantName = ""
 
     var body: some View {
         NavigationStack {
@@ -49,25 +52,76 @@ struct ParticipantsView: View {
                 }
 
                 Section("participant_list_section") {
-                    ForEach(viewModel.filteredParticipants) { participant in
-                        VStack(alignment: .leading) {
-                            Text(participant.name)
-                            Text("participant_contribution_label \(participant.contributionAmount.currencyString)")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                            Text(verbatim: "Balance: \(viewModel.balance(for: participant).currencyString)")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
+                    ForEach(viewModel.visibleFilteredParticipants) { participant in
+                        ParticipantBalanceRowView(balance: viewModel.participantBalance(for: participant))
                         .swipeActions {
-                            Button("participant_delete_action", role: .destructive) {
-                                viewModel.delete(participant: participant, projectID: projectID)
+                            Button("participant_rename_action") {
+                                renamedParticipantName = participant.name
+                                participantPendingRename = participant
                             }
+                            .tint(.blue)
+
+                            Button("participant_delete_action", role: .destructive) {
+                                if viewModel.participantHasExpenses(participant) {
+                                    participantPendingDeletion = participant
+                                } else {
+                                    viewModel.delete(participant: participant, projectID: projectID)
+                                }
+                            }
+                        }
+                        .onAppear {
+                            viewModel.loadMoreParticipantsIfNeeded(currentItem: participant)
                         }
                     }
                 }
             }
             .navigationTitle("participant_title")
+            .alert(
+                "participant_delete_confirmation_title",
+                isPresented: Binding(
+                    get: { participantPendingDeletion != nil },
+                    set: { isPresented in
+                        if !isPresented {
+                            participantPendingDeletion = nil
+                        }
+                    }
+                ),
+                presenting: participantPendingDeletion
+            ) { participant in
+                Button("participant_delete_confirmation_action", role: .destructive) {
+                    viewModel.delete(participant: participant, projectID: projectID)
+                    participantPendingDeletion = nil
+                }
+                Button("common_cancel", role: .cancel) {
+                    participantPendingDeletion = nil
+                }
+            } message: { _ in
+                Text("participant_delete_confirmation_message")
+            }
+            .sheet(item: $participantPendingRename) { participant in
+                NavigationStack {
+                    Form {
+                        TextField("participant_name_placeholder", text: $renamedParticipantName)
+                    }
+                    .navigationTitle("participant_rename_title")
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("project_cancel_button") {
+                                participantPendingRename = nil
+                            }
+                        }
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("project_save_button") {
+                                var updatedParticipant = participant
+                                updatedParticipant.name = renamedParticipantName.trimmingCharacters(in: .whitespacesAndNewlines)
+                                viewModel.update(participant: updatedParticipant, projectID: projectID)
+                                participantPendingRename = nil
+                            }
+                            .disabled(renamedParticipantName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        }
+                    }
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {

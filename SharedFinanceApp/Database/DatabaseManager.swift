@@ -85,7 +85,6 @@ final class DatabaseManager {
             try execute(sql: "CREATE TABLE IF NOT EXISTS expenses (id TEXT PRIMARY KEY, payload TEXT NOT NULL, updated_at TEXT NOT NULL, version TEXT NOT NULL);")
             try execute(sql: "CREATE TABLE IF NOT EXISTS history (id TEXT PRIMARY KEY, payload TEXT NOT NULL, updated_at TEXT NOT NULL, version TEXT NOT NULL);")
             try execute(sql: "CREATE TABLE IF NOT EXISTS sync_logs (id TEXT PRIMARY KEY, payload TEXT NOT NULL, updated_at TEXT NOT NULL, version TEXT NOT NULL);")
-            try execute(sql: "CREATE TABLE IF NOT EXISTS conflict_resolution_logs (id TEXT PRIMARY KEY, payload TEXT NOT NULL, updated_at TEXT NOT NULL, version TEXT NOT NULL);")
         } catch {
             errorLogger.log(error, context: "Database bootstrap")
         }

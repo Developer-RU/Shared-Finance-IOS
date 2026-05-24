@@ -22,7 +22,26 @@ final class LocalSharedFinanceRepository: SharedFinanceRepository {
     }
 
     func deleteProject(_ project: Project) {
-        deleteItem(id: project.id, table: "projects")
+        do {
+            let participantIDs = Set(project.participantIDs)
+            let projectExpenses = fetchExpenses(projectID: project.id)
+
+            try databaseManager.performTransaction {
+                for expense in projectExpenses {
+                    try deleteItemThrowing(id: expense.id, table: "expenses")
+                }
+
+                try deleteItemThrowing(id: project.id, table: "projects")
+
+                let remainingProjects = fetchProjects()
+                let remainingParticipantIDs = Set(remainingProjects.flatMap(\ .participantIDs))
+                for participantID in participantIDs where !remainingParticipantIDs.contains(participantID) {
+                    try deleteItemThrowing(id: participantID, table: "participants")
+                }
+            }
+        } catch {
+            errorLogger.log(error, context: "delete project cascade")
+        }
     }
 
     func fetchParticipants(projectID: UUID?) -> [Participant] {
@@ -49,13 +68,59 @@ final class LocalSharedFinanceRepository: SharedFinanceRepository {
         }
     }
 
-    func deleteParticipant(_ participant: Participant, projectID: UUID) {
-        deleteItem(id: participant.id, table: "participants")
-        guard var project = fetchProjects().first(where: { $0.id == projectID }) else { return }
-        project.participantIDs.removeAll { $0 == participant.id }
-        project.recordVersion += 1
-        project.updatedAt = .now
-        upsertProject(project)
+    func deleteParticipant(_ participant: Participant, projectID: UUID) -> Bool {
+        let allProjects = fetchProjects()
+        let allExpenses = fetchExpenses(projectID: nil)
+        let participantExpensesInProject = allExpenses.filter {
+            $0.projectID == projectID && $0.participantID == participant.id
+        }
+        let participantHasExpensesAnywhere = allExpenses.contains { $0.participantID == participant.id }
+        let participantReferencedByAnyProject = allProjects.contains { $0.participantIDs.contains(participant.id) }
+
+        guard var project = allProjects.first(where: { $0.id == projectID }) else {
+            guard !participantReferencedByAnyProject && !participantHasExpensesAnywhere else {
+                return false
+            }
+
+            do {
+                try databaseManager.performTransaction {
+                    try deleteItemThrowing(id: participant.id, table: "participants")
+                }
+            } catch {
+                errorLogger.log(error, context: "delete orphan participant")
+                return false
+            }
+
+            return true
+        }
+
+        do {
+            try databaseManager.performTransaction {
+                for expense in participantExpensesInProject {
+                    try deleteItemThrowing(id: expense.id, table: "expenses")
+                    project.expenseIDs.removeAll { $0 == expense.id }
+                }
+
+                let wasLinkedToProject = project.participantIDs.contains(participant.id)
+                project.participantIDs.removeAll { $0 == participant.id }
+                if wasLinkedToProject || !participantExpensesInProject.isEmpty {
+                    project.recordVersion += 1
+                    project.updatedAt = .now
+                    upsertProject(project)
+                }
+
+                let remainingProjects = fetchProjects()
+                let isStillReferenced = remainingProjects.contains { $0.participantIDs.contains(participant.id) }
+                if !isStillReferenced {
+                    try deleteItemThrowing(id: participant.id, table: "participants")
+                }
+            }
+        } catch {
+            errorLogger.log(error, context: "delete participant cascade")
+            return false
+        }
+
+        return true
     }
 
     func fetchExpenses(projectID: UUID?) -> [Expense] {
@@ -90,6 +155,11 @@ final class LocalSharedFinanceRepository: SharedFinanceRepository {
 
     func deleteExpense(_ expense: Expense) {
         deleteItem(id: expense.id, table: "expenses")
+        guard var project = fetchProject(id: expense.projectID) else { return }
+        project.expenseIDs.removeAll { $0 == expense.id }
+        project.recordVersion += 1
+        project.updatedAt = .now
+        upsertProject(project)
     }
 
     func fetchHistory() -> [ChangeHistoryEntry] {
@@ -106,14 +176,6 @@ final class LocalSharedFinanceRepository: SharedFinanceRepository {
 
     func appendSyncLog(_ entry: SyncLogEntry) {
         upsertItem(entry, id: entry.id, table: "sync_logs", updatedAt: entry.date, version: 1)
-    }
-
-    func fetchConflictResolutionLogs() -> [ConflictResolutionLogEntry] {
-        fetchItems(table: "conflict_resolution_logs").sorted { $0.date > $1.date }
-    }
-
-    func appendConflictResolutionLog(_ entry: ConflictResolutionLogEntry) {
-        upsertItem(entry, id: entry.id, table: "conflict_resolution_logs", updatedAt: entry.date, version: 1)
     }
 
     func exportPayload() -> SyncPayload {
@@ -288,9 +350,15 @@ final class LocalSharedFinanceRepository: SharedFinanceRepository {
 
     private func deleteItem(id: UUID, table: String) {
         do {
-            try databaseManager.execute(sql: "DELETE FROM \(table) WHERE id = ?;", bindings: [id.uuidString])
+            try deleteItemThrowing(id: id, table: table)
         } catch {
             errorLogger.log(error, context: "delete \(table)")
+        }
+    }
+
+    private func deleteItemThrowing(id: UUID, table: String) throws {
+        do {
+            try databaseManager.execute(sql: "DELETE FROM \(table) WHERE id = ?;", bindings: [id.uuidString])
         }
     }
 

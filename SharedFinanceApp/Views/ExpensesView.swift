@@ -9,6 +9,11 @@ struct ExpensesView: View {
     @State private var amount = ""
     @State private var comment = ""
     @State private var selectedParticipantID: UUID?
+    @State private var expensePendingEdit: Expense?
+    @State private var editedTitle = ""
+    @State private var editedAmount = ""
+    @State private var editedComment = ""
+    @State private var editedParticipantID: UUID?
 
     var body: some View {
         NavigationStack {
@@ -86,12 +91,25 @@ struct ExpensesView: View {
                 }
 
                 Section("expense_list_section") {
-                    ForEach(viewModel.filteredExpenses) { expense in
+                    ForEach(viewModel.visibleFilteredExpenses) { expense in
                         ExpenseRowView(expense: expense)
                             .swipeActions {
+                                Button("expense_edit_action") {
+                                    editedTitle = expense.title
+                                    editedAmount = expense.amount.description
+                                    editedComment = expense.comment
+                                    editedParticipantID = expense.participantID
+                                    viewModel.validationMessage = ""
+                                    expensePendingEdit = expense
+                                }
+                                .tint(.blue)
+
                                 Button("expense_delete_action", role: .destructive) {
                                     viewModel.delete(expense: expense)
                                 }
+                            }
+                            .onAppear {
+                                viewModel.loadMoreExpensesIfNeeded(currentItem: expense)
                             }
                     }
                 }
@@ -111,6 +129,55 @@ struct ExpensesView: View {
                 viewModel.load(projectID: projectID)
                 if selectedParticipantID == nil {
                     selectedParticipantID = viewModel.availableParticipants.first?.id
+                }
+            }
+            .sheet(item: $expensePendingEdit) { expense in
+                NavigationStack {
+                    Form {
+                        TextField("expense_title_placeholder", text: $editedTitle)
+                        TextField("expense_amount_placeholder", text: $editedAmount)
+                            .keyboardType(.decimalPad)
+                        TextField("expense_comment_placeholder", text: $editedComment)
+
+                        Picker("expense_participant_picker", selection: $editedParticipantID) {
+                            Text("expense_choose_participant").tag(nil as UUID?)
+                            ForEach(viewModel.availableParticipants) { participant in
+                                Text(participant.name).tag(Optional(participant.id))
+                            }
+                        }
+
+                        if !viewModel.validationMessage.isEmpty {
+                            Text(LocalizedStringKey(viewModel.validationMessage))
+                                .font(.caption)
+                                .foregroundStyle(.red)
+                        }
+                    }
+                    .navigationTitle("expense_edit_title")
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("project_cancel_button") {
+                                viewModel.validationMessage = ""
+                                expensePendingEdit = nil
+                            }
+                        }
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("project_save_button") {
+                                guard let participantID = editedParticipantID else { return }
+                                guard let parsedAmount = Decimal(string: editedAmount.replacingOccurrences(of: ",", with: ".")) else { return }
+
+                                var updatedExpense = expense
+                                updatedExpense.title = editedTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+                                updatedExpense.amount = parsedAmount
+                                updatedExpense.comment = editedComment
+                                updatedExpense.participantID = participantID
+
+                                if viewModel.update(expense: updatedExpense) {
+                                    expensePendingEdit = nil
+                                }
+                            }
+                            .disabled(editedTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || editedAmount.isEmpty || editedParticipantID == nil)
+                        }
+                    }
                 }
             }
         }

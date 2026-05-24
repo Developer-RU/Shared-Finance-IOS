@@ -35,8 +35,7 @@ final class AppContainer: ObservableObject {
         migrationManager.runMigrationsIfNeeded()
         let repository = LocalSharedFinanceRepository(databaseManager: databaseManager, errorLogger: errorLogger)
         let bleManager = BLEManager(errorLogger: errorLogger)
-        let syncEngine = SyncEngine(errorLogger: errorLogger)
-        let syncService = SyncService(repository: repository, bleManager: bleManager, syncEngine: syncEngine, errorLogger: errorLogger)
+        let syncService = SyncService(repository: repository, bleManager: bleManager, errorLogger: errorLogger)
         let backupService = BackupService(repository: repository, errorLogger: errorLogger)
         let appState = AppState()
         DemoDataSeeder(repository: repository).seedIfNeeded()
@@ -200,18 +199,5 @@ private final class DemoDataSeeder {
             changedRecordsCount: demoExpenses.count
         )
         repository.appendSyncLog(syncLog)
-
-        let conflictLog = ConflictResolutionLogEntry(
-            id: UUID(),
-            date: now.addingTimeInterval(-12 * 60 * 60),
-            entityName: "Expense",
-            entityID: demoExpenses[0].id,
-            localValue: "120.00",
-            remoteValue: "125.00",
-            decision: .keepLocal,
-            decisionSource: .manual,
-            isApplied: true
-        )
-        repository.appendConflictResolutionLog(conflictLog)
     }
 }

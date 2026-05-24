@@ -57,6 +57,12 @@ struct SettingsView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+
+                Section("settings_logs_section") {
+                    NavigationLink("settings_open_logs_button") {
+                        SyncLogsView(viewModel: HistoryViewModel(repository: viewModel.repository, errorLogger: viewModel.errorLogger))
+                    }
+                }
             }
             .navigationTitle("settings_title")
             .fileImporter(

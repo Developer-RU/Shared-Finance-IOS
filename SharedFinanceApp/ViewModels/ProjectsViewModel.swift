@@ -37,10 +37,15 @@ enum ProjectSortOption: String, CaseIterable, Identifiable {
 
 @MainActor
 final class ProjectsViewModel: ObservableObject {
+    private static let pageSize = 30
+    private static let pinnedStorageKey = "projects_pinned_ids"
+
     @Published var projects: [Project] = []
     @Published var searchText = ""
     @Published var selectedStatusFilter: ProjectStatusFilter = .all
     @Published var selectedSort: ProjectSortOption = .updatedNewest
+    @Published private(set) var visibleProjectsLimit = pageSize
+    @Published private(set) var pinnedProjectIDs: Set<UUID> = []
 
     private let repository: SharedFinanceRepository
     private let errorLogger: ErrorLogger
@@ -49,6 +54,7 @@ final class ProjectsViewModel: ObservableObject {
     init(repository: SharedFinanceRepository, errorLogger: ErrorLogger) {
         self.repository = repository
         self.errorLogger = errorLogger
+        self.pinnedProjectIDs = Self.loadPinnedProjectIDs()
 
         NotificationCenter.default.publisher(for: .sharedFinanceDataDidChange)
             .receive(on: RunLoop.main)
@@ -56,6 +62,8 @@ final class ProjectsViewModel: ObservableObject {
                 self?.loadProjects()
             }
             .store(in: &cancellables)
+
+        setupPaginationResetSubscriptions()
     }
 
     var filteredProjects: [Project] {
@@ -75,6 +83,9 @@ final class ProjectsViewModel: ObservableObject {
         switch selectedSort {
         case .updatedNewest:
             return filtered.sorted {
+                if self.pinnedProjectIDs.contains($0.id) != self.pinnedProjectIDs.contains($1.id) {
+                    return self.pinnedProjectIDs.contains($0.id)
+                }
                 if $0.status != $1.status {
                     return $0.status == .active
                 }
@@ -82,6 +93,9 @@ final class ProjectsViewModel: ObservableObject {
             }
         case .updatedOldest:
             return filtered.sorted {
+                if self.pinnedProjectIDs.contains($0.id) != self.pinnedProjectIDs.contains($1.id) {
+                    return self.pinnedProjectIDs.contains($0.id)
+                }
                 if $0.status != $1.status {
                     return $0.status == .active
                 }
@@ -89,6 +103,9 @@ final class ProjectsViewModel: ObservableObject {
             }
         case .titleAZ:
             return filtered.sorted {
+                if self.pinnedProjectIDs.contains($0.id) != self.pinnedProjectIDs.contains($1.id) {
+                    return self.pinnedProjectIDs.contains($0.id)
+                }
                 if $0.status != $1.status {
                     return $0.status == .active
                 }
@@ -96,12 +113,19 @@ final class ProjectsViewModel: ObservableObject {
             }
         case .titleZA:
             return filtered.sorted {
+                if self.pinnedProjectIDs.contains($0.id) != self.pinnedProjectIDs.contains($1.id) {
+                    return self.pinnedProjectIDs.contains($0.id)
+                }
                 if $0.status != $1.status {
                     return $0.status == .active
                 }
                 return $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedDescending
             }
         }
+    }
+
+    var visibleFilteredProjects: [Project] {
+        Array(filteredProjects.prefix(visibleProjectsLimit))
     }
 
     func loadProjects() {
@@ -111,6 +135,14 @@ final class ProjectsViewModel: ObservableObject {
             }
             return $0.updatedAt > $1.updatedAt
         }
+        visibleProjectsLimit = Self.pageSize
+    }
+
+    func loadMoreProjectsIfNeeded(currentItem: Project) {
+        guard let lastVisible = visibleFilteredProjects.last, lastVisible.id == currentItem.id else {
+            return
+        }
+        visibleProjectsLimit = min(visibleProjectsLimit + Self.pageSize, filteredProjects.count)
     }
 
     func createProject(title: String, details: String) {
@@ -141,13 +173,51 @@ final class ProjectsViewModel: ObservableObject {
 
     func deleteProject(_ project: Project) {
         repository.deleteProject(project)
+        pinnedProjectIDs.remove(project.id)
+        savePinnedProjectIDs()
         repository.appendHistory(ChangeHistoryEntry(operationType: .delete, actorName: "Local User", description: "Deleted project: \(project.title)", recordVersion: project.recordVersion + 1))
         loadProjects()
+    }
+
+    func togglePinned(_ project: Project) {
+        if pinnedProjectIDs.contains(project.id) {
+            pinnedProjectIDs.remove(project.id)
+        } else {
+            pinnedProjectIDs.insert(project.id)
+        }
+        savePinnedProjectIDs()
+    }
+
+    func isPinned(_ project: Project) -> Bool {
+        pinnedProjectIDs.contains(project.id)
     }
 
     func balance(for project: Project) -> Decimal {
         let participants = repository.fetchParticipants(projectID: project.id)
         let expenses = repository.fetchExpenses(projectID: project.id)
         return BalanceCalculator.calculate(participants: participants, expenses: expenses).reduce(.zero) { $0 + $1.balance }
+    }
+
+    private func setupPaginationResetSubscriptions() {
+        Publishers.CombineLatest3(
+            $searchText.removeDuplicates(),
+            $selectedStatusFilter.removeDuplicates(),
+            $selectedSort.removeDuplicates()
+        )
+        .dropFirst()
+        .sink { [weak self] _, _, _ in
+            self?.visibleProjectsLimit = Self.pageSize
+        }
+        .store(in: &cancellables)
+    }
+
+    private static func loadPinnedProjectIDs() -> Set<UUID> {
+        let raw = UserDefaults.standard.array(forKey: pinnedStorageKey) as? [String] ?? []
+        return Set(raw.compactMap(UUID.init(uuidString:)))
+    }
+
+    private func savePinnedProjectIDs() {
+        let raw = pinnedProjectIDs.map(\.uuidString)
+        UserDefaults.standard.set(raw, forKey: Self.pinnedStorageKey)
     }
 }

@@ -43,14 +43,19 @@ enum ParticipantBalanceFilter: String, CaseIterable, Identifiable {
 
 @MainActor
 final class ParticipantsViewModel: ObservableObject {
+    private static let pageSize = 30
+
     @Published var participants: [Participant] = []
     @Published var searchText = ""
     @Published var selectedSort: ParticipantSortOption = .balanceDescending
     @Published var selectedBalanceFilter: ParticipantBalanceFilter = .all
+    @Published private(set) var visibleParticipantsLimit = pageSize
 
     private let repository: SharedFinanceRepository
     private let errorLogger: ErrorLogger
     private var balancesByParticipantID: [UUID: Decimal] = [:]
+    private var expensesByParticipantID: [UUID: Decimal] = [:]
+    private var expenseCountsByParticipantID: [UUID: Int] = [:]
     private var currentProjectID: UUID?
     private var cancellables = Set<AnyCancellable>()
 
@@ -65,17 +70,24 @@ final class ParticipantsViewModel: ObservableObject {
                 self.load(projectID: self.currentProjectID)
             }
             .store(in: &cancellables)
+
+        setupPaginationResetSubscriptions()
     }
 
     func load(projectID: UUID?) {
         currentProjectID = projectID
         participants = repository.fetchParticipants(projectID: projectID)
         let expenses = repository.fetchExpenses(projectID: projectID)
-        let expensesByParticipantID = Dictionary(grouping: expenses, by: { $0.participantID })
+        let groupedExpenses = Dictionary(grouping: expenses, by: { $0.participantID })
+        expenseCountsByParticipantID = groupedExpenses.mapValues(\.count)
+        expensesByParticipantID = groupedExpenses.mapValues { participantExpenses in
+            participantExpenses.reduce(Decimal.zero) { $0 + $1.amount }
+        }
         balancesByParticipantID = Dictionary(uniqueKeysWithValues: participants.map { participant in
-            let expenseSum = expensesByParticipantID[participant.id, default: []].reduce(Decimal.zero) { $0 + $1.amount }
+            let expenseSum = expensesByParticipantID[participant.id] ?? .zero
             return (participant.id, participant.contributionAmount - expenseSum)
         })
+        visibleParticipantsLimit = Self.pageSize
     }
 
     var filteredParticipants: [Participant] {
@@ -124,8 +136,34 @@ final class ParticipantsViewModel: ObservableObject {
         return result
     }
 
+    var visibleFilteredParticipants: [Participant] {
+        Array(filteredParticipants.prefix(visibleParticipantsLimit))
+    }
+
+    func loadMoreParticipantsIfNeeded(currentItem: Participant) {
+        guard let lastVisible = visibleFilteredParticipants.last, lastVisible.id == currentItem.id else {
+            return
+        }
+        visibleParticipantsLimit = min(visibleParticipantsLimit + Self.pageSize, filteredParticipants.count)
+    }
+
     func balance(for participant: Participant) -> Decimal {
         balancesByParticipantID[participant.id] ?? participant.balanceAmount
+    }
+
+    func participantBalance(for participant: Participant) -> ParticipantBalance {
+        let expense = expensesByParticipantID[participant.id] ?? .zero
+        return ParticipantBalance(
+            id: participant.id,
+            name: participant.name,
+            contribution: participant.contributionAmount,
+            expense: expense,
+            balance: balance(for: participant)
+        )
+    }
+
+    func participantHasExpenses(_ participant: Participant) -> Bool {
+        (expenseCountsByParticipantID[participant.id] ?? 0) > 0
     }
 
     func add(name: String, contribution: Decimal, projectID: UUID) {
@@ -145,8 +183,26 @@ final class ParticipantsViewModel: ObservableObject {
     }
 
     func delete(participant: Participant, projectID: UUID) {
-        repository.deleteParticipant(participant, projectID: projectID)
+        let deleted = repository.deleteParticipant(participant, projectID: projectID)
+        guard deleted else {
+            errorLogger.log("Unable to delete participant: \(participant.name)")
+            return
+        }
+
         repository.appendHistory(ChangeHistoryEntry(operationType: .delete, actorName: "Local User", description: "Deleted participant: \(participant.name)", recordVersion: participant.recordVersion + 1))
         load(projectID: projectID)
+    }
+
+    private func setupPaginationResetSubscriptions() {
+        Publishers.CombineLatest3(
+            $searchText.removeDuplicates(),
+            $selectedSort.removeDuplicates(),
+            $selectedBalanceFilter.removeDuplicates()
+        )
+        .dropFirst()
+        .sink { [weak self] _, _, _ in
+            self?.visibleParticipantsLimit = Self.pageSize
+        }
+        .store(in: &cancellables)
     }
 }

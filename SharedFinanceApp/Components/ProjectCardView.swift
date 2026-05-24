@@ -4,6 +4,7 @@ struct ProjectCardView: View {
     let project: Project
     let participantCount: Int
     let projectBalance: Decimal
+    var isPinned: Bool = false
 
     private var statusBadgeTitle: String {
         switch project.status {
@@ -24,6 +25,12 @@ struct ProjectCardView: View {
             HStack(alignment: .top, spacing: 8) {
                 Text(project.title)
                     .font(.headline)
+                if isPinned {
+                    Image(systemName: "pin.fill")
+                        .font(.caption)
+                        .foregroundStyle(.blue)
+                        .padding(.top, 2)
+                }
                 Spacer()
                 Label {
                     Text(LocalizedStringKey(statusBadgeTitle))
@@ -49,6 +56,7 @@ struct ProjectCardView: View {
 
                 Text(projectBalance.currencyString)
                     .fontWeight(.medium)
+                    .foregroundStyle(projectBalance >= 0 ? .green : .red)
                     .lineLimit(1)
                     .fixedSize(horizontal: true, vertical: false)
             }

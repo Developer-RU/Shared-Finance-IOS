@@ -5,6 +5,7 @@ struct ProjectsView: View {
     @StateObject var viewModel: ProjectsViewModel
     @AppStorage("projects_filters_visible") private var filtersVisible = true
     @State private var showingCreate = false
+    @State private var projectPendingDeletion: Project?
     @State private var newTitle = ""
     @State private var newDescription = ""
     @State private var newDescriptionHeight: CGFloat = 56
@@ -35,7 +36,7 @@ struct ProjectsView: View {
                 }
 
                 Section("projects_title") {
-                    ForEach(viewModel.filteredProjects) { project in
+                    ForEach(viewModel.visibleFilteredProjects) { project in
                         NavigationLink {
                             ProjectDetailView(
                                 project: project,
@@ -48,23 +49,57 @@ struct ProjectsView: View {
                             ProjectCardView(
                                 project: project,
                                 participantCount: project.participantIDs.count,
-                                projectBalance: viewModel.balance(for: project)
+                                projectBalance: viewModel.balance(for: project),
+                                isPinned: viewModel.isPinned(project)
                             )
                             .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         .swipeActions {
                             Button("project_archive_action") { viewModel.archiveProject(project) }
                                 .tint(.orange)
-                            Button("project_delete_action", role: .destructive) { viewModel.deleteProject(project) }
+                            Button("project_delete_action", role: .destructive) {
+                                projectPendingDeletion = project
+                            }
+                        }
+                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                            Button(viewModel.isPinned(project) ? "project_unpin_action" : "project_pin_action") {
+                                viewModel.togglePinned(project)
+                            }
+                            .tint(viewModel.isPinned(project) ? .gray : .blue)
                         }
                         .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
                         .alignmentGuide(.listRowSeparatorTrailing) { dimensions in
                             dimensions[.trailing]
                         }
+                        .onAppear {
+                            viewModel.loadMoreProjectsIfNeeded(currentItem: project)
+                        }
                     }
                 }
             }
             .navigationTitle("projects_title")
+            .alert(
+                "project_delete_confirmation_title",
+                isPresented: Binding(
+                    get: { projectPendingDeletion != nil },
+                    set: { isPresented in
+                        if !isPresented {
+                            projectPendingDeletion = nil
+                        }
+                    }
+                ),
+                presenting: projectPendingDeletion
+            ) { project in
+                Button("project_delete_confirmation_action", role: .destructive) {
+                    viewModel.deleteProject(project)
+                    projectPendingDeletion = nil
+                }
+                Button("common_cancel", role: .cancel) {
+                    projectPendingDeletion = nil
+                }
+            } message: { _ in
+                Text("project_delete_confirmation_message")
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack(spacing: 12) {

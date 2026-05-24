@@ -9,7 +9,7 @@ protocol SharedFinanceRepository {
     func fetchParticipants(projectID: UUID?) -> [Participant]
     func fetchParticipant(id: UUID) -> Participant?
     func upsertParticipant(_ participant: Participant, projectID: UUID)
-    func deleteParticipant(_ participant: Participant, projectID: UUID)
+    func deleteParticipant(_ participant: Participant, projectID: UUID) -> Bool
 
     func fetchExpenses(projectID: UUID?) -> [Expense]
     func upsertExpense(_ expense: Expense)
@@ -20,9 +20,6 @@ protocol SharedFinanceRepository {
 
     func fetchSyncLogs() -> [SyncLogEntry]
     func appendSyncLog(_ entry: SyncLogEntry)
-
-    func fetchConflictResolutionLogs() -> [ConflictResolutionLogEntry]
-    func appendConflictResolutionLog(_ entry: ConflictResolutionLogEntry)
 
     func exportPayload() -> SyncPayload
     func importPayload(_ payload: SyncPayload)

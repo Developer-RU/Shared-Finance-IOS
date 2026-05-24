@@ -12,8 +12,9 @@ struct ExpenseRowView: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            Text(expense.amount.currencyString)
+            Text("-\(expense.amount.currencyString)")
                 .fontWeight(.medium)
+                .foregroundStyle(.red)
         }
     }
 }

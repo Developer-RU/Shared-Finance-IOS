@@ -8,10 +8,14 @@ final class SettingsViewModel: ObservableObject {
 
     private let appState: AppState
     private let backupService: BackupService
+    let repository: SharedFinanceRepository
+    let errorLogger: ErrorLogger
 
-    init(appState: AppState, backupService: BackupService) {
+    init(appState: AppState, backupService: BackupService, repository: SharedFinanceRepository, errorLogger: ErrorLogger) {
         self.appState = appState
         self.backupService = backupService
+        self.repository = repository
+        self.errorLogger = errorLogger
         self.selectedTheme = appState.preferredTheme
         self.languageCode = appState.languageCode
         self.faceIDEnabled = appState.isFaceIDEnabled

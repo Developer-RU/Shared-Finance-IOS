@@ -1,10 +1,6 @@
 "app_title" = "Shared Finance";
 "root_subtitle" = "SwiftUI";
 "sync_rssi_label" = "RSSI:";
-"sync_conflict_local_label" = "Local:";
-"sync_conflict_remote_label" = "Remote:";
-"sync_conflict_keep_local" = "Local";
-"sync_conflict_accept_remote" = "Remote";
 "project_edit_title" = "Edit project";
 "project_save_button" = "Save";
 "expense_search_prompt" = "Search";
@@ -14,7 +10,3 @@
 "home_title" = "Home";
 "root_subtitle" = "New clean SwiftUI project";
 "sync_rssi_label" = "RSSI:";
-"sync_conflict_local_label" = "Local:";
-"sync_conflict_remote_label" = "Remote:";
-"sync_conflict_keep_local" = "Keep local";
-"sync_conflict_accept_remote" = "Accept remote";

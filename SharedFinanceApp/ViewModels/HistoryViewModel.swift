@@ -14,59 +14,25 @@ enum HistoryOperationFilter: String, CaseIterable, Identifiable {
 enum HistorySyncResultFilter: String, CaseIterable, Identifiable {
     case all
     case success
-    case conflict
     case failed
 
     var id: String { rawValue }
 }
 
-enum ConflictDecisionFilter: String, CaseIterable, Identifiable {
-    case all
-    case acceptRemote
-    case keepLocal
-
-    var id: String { rawValue }
-    var titleKey: String {
-        switch self {
-        case .all: return "history_filter_all_decisions"
-        case .acceptRemote: return "history_filter_accept_remote"
-        case .keepLocal: return "history_filter_keep_local"
-        }
-    }
-}
-
-enum ConflictDateFilter: String, CaseIterable, Identifiable {
-    case all
-    case today
-    case sevenDays
-    case thirtyDays
-
-    var id: String { rawValue }
-    var titleKey: String {
-        switch self {
-        case .all: return "history_filter_all_dates"
-        case .today: return "history_filter_today"
-        case .sevenDays: return "history_filter_7_days"
-        case .thirtyDays: return "history_filter_30_days"
-        }
-    }
-}
-
 @MainActor
 final class HistoryViewModel: ObservableObject {
     private static let maxHistoryRecords = 500
+    private static let pageSize = 50
 
     @Published var history: [ChangeHistoryEntry] = []
     @Published var syncLogs: [SyncLogEntry] = []
-    @Published var conflictResolutionLogs: [ConflictResolutionLogEntry] = []
     @Published var searchText = ""
     @Published var selectedOperationFilter: HistoryOperationFilter = .all
     @Published var selectedSyncResultFilter: HistorySyncResultFilter = .all
-    @Published var selectedDecisionFilter: ConflictDecisionFilter = .all
-    @Published var selectedDateFilter: ConflictDateFilter = .all
+    @Published private(set) var visibleHistoryLimit = pageSize
+    @Published private(set) var visibleSyncLogsLimit = pageSize
 
     private let repository: SharedFinanceRepository
-    private let errorLogger: ErrorLogger
     private var cancellables = Set<AnyCancellable>()
 
     struct HistoryDayGroup: Identifiable {
@@ -78,7 +44,7 @@ final class HistoryViewModel: ObservableObject {
 
     init(repository: SharedFinanceRepository, errorLogger: ErrorLogger) {
         self.repository = repository
-        self.errorLogger = errorLogger
+        _ = errorLogger
 
         NotificationCenter.default.publisher(for: .sharedFinanceDataDidChange)
             .receive(on: RunLoop.main)
@@ -86,6 +52,8 @@ final class HistoryViewModel: ObservableObject {
                 self?.load()
             }
             .store(in: &cancellables)
+
+        setupPaginationResetSubscriptions()
     }
 
     var filteredHistory: [ChangeHistoryEntry] {
@@ -114,7 +82,7 @@ final class HistoryViewModel: ObservableObject {
 
     var groupedFilteredHistory: [HistoryDayGroup] {
         let calendar = Calendar.current
-        let grouped = Dictionary(grouping: filteredHistory) { calendar.startOfDay(for: $0.date) }
+        let grouped = Dictionary(grouping: visibleFilteredHistory) { calendar.startOfDay(for: $0.date) }
 
         return grouped.keys
             .sorted(by: >)
@@ -124,6 +92,10 @@ final class HistoryViewModel: ObservableObject {
                     items: (grouped[day] ?? []).sorted { $0.date > $1.date }
                 )
             }
+    }
+
+    var visibleFilteredHistory: [ChangeHistoryEntry] {
+        Array(filteredHistory.prefix(visibleHistoryLimit))
     }
 
     var filteredSyncLogs: [SyncLogEntry] {
@@ -138,8 +110,6 @@ final class HistoryViewModel: ObservableObject {
                 matchesResult = true
             case .success:
                 matchesResult = item.result == .success
-            case .conflict:
-                matchesResult = item.result == .conflict
             case .failed:
                 matchesResult = item.result == .failed
             }
@@ -148,45 +118,54 @@ final class HistoryViewModel: ObservableObject {
         }
     }
 
-    var filteredConflictResolutionLogs: [ConflictResolutionLogEntry] {
-        let now = Date()
-        return conflictResolutionLogs.filter { entry in
-            let matchesEntity = searchText.isEmpty || entry.entityName.localizedCaseInsensitiveContains(searchText) || entry.localValue.localizedCaseInsensitiveContains(searchText) || entry.remoteValue.localizedCaseInsensitiveContains(searchText)
-            let matchesDecision: Bool
-            switch selectedDecisionFilter {
-            case .all: matchesDecision = true
-            case .acceptRemote: matchesDecision = entry.decision == .acceptRemote
-            case .keepLocal: matchesDecision = entry.decision == .keepLocal
-            }
-
-            let matchesDate: Bool
-            switch selectedDateFilter {
-            case .all:
-                matchesDate = true
-            case .today:
-                matchesDate = Calendar.current.isDateInToday(entry.date)
-            case .sevenDays:
-                matchesDate = entry.date >= Calendar.current.date(byAdding: .day, value: -7, to: now) ?? .distantPast
-            case .thirtyDays:
-                matchesDate = entry.date >= Calendar.current.date(byAdding: .day, value: -30, to: now) ?? .distantPast
-            }
-
-            return matchesEntity && matchesDecision && matchesDate
-        }
+    var visibleFilteredSyncLogs: [SyncLogEntry] {
+        Array(filteredSyncLogs.prefix(visibleSyncLogsLimit))
     }
 
     func load() {
         history = Array(repository.fetchHistory().prefix(Self.maxHistoryRecords))
         syncLogs = Array(repository.fetchSyncLogs().prefix(Self.maxHistoryRecords))
-        conflictResolutionLogs = Array(repository.fetchConflictResolutionLogs().prefix(Self.maxHistoryRecords))
+        resetPagination()
     }
 
-    func exportFilteredConflictLogsData() -> Data? {
-        do {
-            return try JSONEncoder.pretty.encode(filteredConflictResolutionLogs)
-        } catch {
-            errorLogger.log(error, context: "History export")
-            return nil
+    func loadMoreHistoryIfNeeded(currentItem: ChangeHistoryEntry) {
+        guard let lastVisible = visibleFilteredHistory.last, lastVisible.id == currentItem.id else {
+            return
         }
+        visibleHistoryLimit = min(visibleHistoryLimit + Self.pageSize, filteredHistory.count)
+    }
+
+    func loadMoreSyncLogsIfNeeded(currentItem: SyncLogEntry) {
+        guard let lastVisible = visibleFilteredSyncLogs.last, lastVisible.id == currentItem.id else {
+            return
+        }
+        visibleSyncLogsLimit = min(visibleSyncLogsLimit + Self.pageSize, filteredSyncLogs.count)
+    }
+
+    private func resetPagination() {
+        visibleHistoryLimit = Self.pageSize
+        visibleSyncLogsLimit = Self.pageSize
+    }
+
+    private func setupPaginationResetSubscriptions() {
+        Publishers.CombineLatest(
+            $searchText.removeDuplicates(),
+            $selectedOperationFilter.removeDuplicates()
+        )
+        .dropFirst()
+        .sink { [weak self] _, _ in
+            self?.visibleHistoryLimit = Self.pageSize
+        }
+        .store(in: &cancellables)
+
+        Publishers.CombineLatest(
+            $searchText.removeDuplicates(),
+            $selectedSyncResultFilter.removeDuplicates()
+        )
+        .dropFirst()
+        .sink { [weak self] _, _ in
+            self?.visibleSyncLogsLimit = Self.pageSize
+        }
+        .store(in: &cancellables)
     }
 }

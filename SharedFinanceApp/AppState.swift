@@ -2,12 +2,41 @@ import Foundation
 import SwiftUI
 
 final class AppState: ObservableObject {
+    private enum StorageKey {
+        static let preferredTheme = "app.preferredTheme"
+        static let languageCode = "app.languageCode"
+        static let isFaceIDEnabled = "app.isFaceIDEnabled"
+    }
+
+    private let defaults = UserDefaults.standard
+
     @Published var selectedTab: RootTab = AppState.initialSelectedTab
-    @Published var preferredTheme: AppTheme = .system
-    @Published var languageCode: String = {
-        "ru"
-    }()
-    @Published var isFaceIDEnabled: Bool = false
+    @Published var preferredTheme: AppTheme = .system {
+        didSet {
+            defaults.set(preferredTheme.rawValue, forKey: StorageKey.preferredTheme)
+        }
+    }
+    @Published var languageCode: String = "ru" {
+        didSet {
+            defaults.set(languageCode, forKey: StorageKey.languageCode)
+        }
+    }
+    @Published var isFaceIDEnabled: Bool = false {
+        didSet {
+            defaults.set(isFaceIDEnabled, forKey: StorageKey.isFaceIDEnabled)
+        }
+    }
+
+    init() {
+        if let storedTheme = defaults.string(forKey: StorageKey.preferredTheme),
+           let theme = AppTheme(rawValue: storedTheme) {
+            preferredTheme = theme
+        }
+
+        let storedLanguage = defaults.string(forKey: StorageKey.languageCode) ?? "ru"
+        languageCode = Self.supportedLanguageCodes.contains(storedLanguage) ? storedLanguage : "ru"
+        isFaceIDEnabled = defaults.bool(forKey: StorageKey.isFaceIDEnabled)
+    }
 
     static let supportedLanguageCodes = ["en", "ru"]
 

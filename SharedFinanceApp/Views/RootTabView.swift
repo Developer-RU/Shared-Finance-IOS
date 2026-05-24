@@ -22,7 +22,7 @@ struct RootTabView: View {
                 .tabItem { Label("sync_tab", systemImage: "dot.radiowaves.left.and.right") }
                 .tag(RootTab.sync)
 
-            SettingsView(viewModel: SettingsViewModel(appState: appState, backupService: container.backupService))
+            SettingsView(viewModel: SettingsViewModel(appState: appState, backupService: container.backupService, repository: container.repository, errorLogger: container.errorLogger))
                 .tabItem { Label("settings_tab", systemImage: "gearshape") }
                 .tag(RootTab.settings)
         }

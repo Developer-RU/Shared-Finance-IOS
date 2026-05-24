@@ -4,6 +4,7 @@ import CoreBluetooth
 final class BLEManager: NSObject, ObservableObject {
     @Published private(set) var discoveredDevices: [BLEDevice] = []
     @Published private(set) var connectedDevice: BLEDevice?
+    @Published private(set) var transferProgress: Double = 0
 
     private let errorLogger: ErrorLogger
     private let config: BLEProtocol.Config
@@ -24,6 +25,9 @@ final class BLEManager: NSObject, ObservableObject {
     private let protocolServiceUUID: CBUUID
     private let transferCharacteristicUUID: CBUUID
     private let notifyCharacteristicUUID: CBUUID
+
+    private var simulatedTransferHandler: ((Data) async throws -> Data)?
+    private var simulatedTelemetry: BLETransferTelemetry?
 
     private(set) var lastTransferTelemetry: BLETransferTelemetry?
 
@@ -69,7 +73,7 @@ final class BLEManager: NSObject, ObservableObject {
         discoveredDevices = []
         peripheralsByID.removeAll()
         centralManager.scanForPeripherals(
-            withServices: [protocolServiceUUID],
+            withServices: nil,
             options: [CBCentralManagerScanOptionAllowDuplicatesKey: false]
         )
     }
@@ -92,6 +96,13 @@ final class BLEManager: NSObject, ObservableObject {
     }
 
     func disconnect() {
+        if simulatedTransferHandler != nil {
+            connectedDevice = nil
+            simulatedTransferHandler = nil
+            simulatedTelemetry = nil
+            return
+        }
+
         if let connectedPeripheral {
             centralManager.cancelPeripheralConnection(connectedPeripheral)
         } else {
@@ -100,18 +111,37 @@ final class BLEManager: NSObject, ObservableObject {
     }
 
     func transfer(payload: Data) async throws -> Data {
+        if let simulatedTransferHandler {
+            let response = try await simulatedTransferHandler(payload)
+            lastTransferTelemetry = simulatedTelemetry
+            return response
+        }
+
         guard connectedDevice != nil else {
             throw BLETransferError.deviceNotConnected
         }
 
+        updateTransferProgress(0.01)
+
         let notifyReady = await waitForNotifyReady(timeoutNs: 2_000_000_000)
         guard notifyReady else {
+            updateTransferProgress(0)
             throw BLETransferError.deviceNotConnected
         }
+
+        updateTransferProgress(0.05)
 
         resetInboundState()
         let chunks = BLEProtocol.chunk(payload, size: config.chunkSize)
         var metrics = TransferMetricsAccumulator(logicalPacketCount: chunks.count + 2)
+        let totalOutboundPackets = max(1, chunks.count + 2)
+        var ackedOutboundPackets = 0
+
+        func markOutboundProgress() {
+            ackedOutboundPackets += 1
+            let fraction = Double(ackedOutboundPackets) / Double(totalOutboundPackets)
+            updateTransferProgress(0.05 + (0.75 * fraction))
+        }
 
         guard
             let peripheral = connectedPeripheral,
@@ -121,14 +151,20 @@ final class BLEManager: NSObject, ObservableObject {
         }
 
         try await sendWithRetry(.start, index: UInt32(chunks.count), payload: Data(), fallbackErrorIndex: Int(BLEProtocol.controlStartIndex), peripheral: peripheral, characteristic: tx, metrics: &metrics)
+        markOutboundProgress()
 
         for (index, chunk) in chunks.enumerated() {
             try await sendWithRetry(.chunk, index: UInt32(index), payload: chunk, fallbackErrorIndex: index, peripheral: peripheral, characteristic: tx, metrics: &metrics)
+            markOutboundProgress()
         }
 
         try await sendWithRetry(.end, index: BLEProtocol.controlEndIndex, payload: Data(), fallbackErrorIndex: Int(BLEProtocol.controlEndIndex), peripheral: peripheral, characteristic: tx, metrics: &metrics)
+        markOutboundProgress()
+
+        updateTransferProgress(0.85)
 
         if let response = await waitForInboundPayload(timeoutNs: config.responseTimeoutNs) {
+            updateTransferProgress(1)
             lastTransferTelemetry = BLEProtocol.telemetry(
                 logicalPacketCount: metrics.logicalPacketCount,
                 retryCount: metrics.retryCount,
@@ -140,6 +176,7 @@ final class BLEManager: NSObject, ObservableObject {
             return response
         }
 
+        updateTransferProgress(0)
         lastTransferTelemetry = BLEProtocol.telemetry(
             logicalPacketCount: metrics.logicalPacketCount,
             retryCount: metrics.retryCount,
@@ -162,22 +199,24 @@ final class BLEManager: NSObject, ObservableObject {
     ) async throws {
         let attempts = BLEProtocol.totalAttempts(maxRetries: config.maxAckRetries)
         for attempt in 1...attempts {
-            let baseDelayNs = BLEProtocol.retryDelay(
-                attempt: attempt,
-                baseDelayNs: config.ackRetryBaseDelayNs,
-                maxDelayNs: config.ackRetryMaxDelayNs
-            )
-            let randomUnit = Double.random(in: 0...1)
-            let jitterPercent = readCurrentJitterPercent()
-            let delayNs = BLEProtocol.jitteredDelay(
-                delayNs: baseDelayNs,
-                jitterPercent: jitterPercent,
-                randomUnit: randomUnit
-            )
-            if delayNs > 0 {
-                try await Task.sleep(nanoseconds: delayNs)
-                metrics.totalRetryDelayNs += delayNs
-                metrics.maxRetryDelayNs = max(metrics.maxRetryDelayNs, delayNs)
+            if attempt > 1 {
+                let baseDelayNs = BLEProtocol.retryDelay(
+                    attempt: attempt,
+                    baseDelayNs: config.ackRetryBaseDelayNs,
+                    maxDelayNs: config.ackRetryMaxDelayNs
+                )
+                let randomUnit = Double.random(in: 0...1)
+                let jitterPercent = readCurrentJitterPercent()
+                let delayNs = BLEProtocol.jitteredDelay(
+                    delayNs: baseDelayNs,
+                    jitterPercent: jitterPercent,
+                    randomUnit: randomUnit
+                )
+                if delayNs > 0 {
+                    try await Task.sleep(nanoseconds: delayNs)
+                    metrics.totalRetryDelayNs += delayNs
+                    metrics.maxRetryDelayNs = max(metrics.maxRetryDelayNs, delayNs)
+                }
             }
             try await writePacket(type, index: index, payload: payload, peripheral: peripheral, characteristic: characteristic)
             let acknowledged = await waitForAck(for: index, timeoutNs: config.ackTimeoutNs)
@@ -308,6 +347,7 @@ final class BLEManager: NSObject, ObservableObject {
         currentJitterPercent = config.ackRetryJitterPercent
         lastTransferTelemetry = nil
         stateLock.unlock()
+        updateTransferProgress(0)
     }
 
     private func markAck(index: UInt32) {
@@ -327,12 +367,19 @@ final class BLEManager: NSObject, ObservableObject {
             inboundBuffer = Data()
             inboundCompletedPayload = nil
             stateLock.unlock()
+            updateTransferProgress(0.88)
             sendAckAsCentral(index: packet.index, peripheral: peripheral)
         case .chunk:
             stateLock.lock()
             inboundBuffer.append(packet.payload)
             inboundReceivedChunks += 1
+            let expected = inboundExpectedChunks
+            let received = inboundReceivedChunks
             stateLock.unlock()
+            if let expected, expected > 0 {
+                let fraction = min(1.0, Double(received) / Double(expected))
+                updateTransferProgress(0.88 + (0.10 * fraction))
+            }
             sendAckAsCentral(index: packet.index, peripheral: peripheral)
         case .end:
             stateLock.lock()
@@ -342,7 +389,19 @@ final class BLEManager: NSObject, ObservableObject {
                 inboundCompletedPayload = inboundBuffer
             }
             stateLock.unlock()
+            updateTransferProgress(1)
             sendAckAsCentral(index: packet.index, peripheral: peripheral)
+        }
+    }
+
+    private func updateTransferProgress(_ value: Double) {
+        let normalized = max(0, min(1, value))
+        if Thread.isMainThread {
+            transferProgress = normalized
+        } else {
+            DispatchQueue.main.async { [weak self] in
+                self?.transferProgress = normalized
+            }
         }
     }
 
@@ -424,6 +483,17 @@ final class BLEManager: NSObject, ObservableObject {
             }
             pendingPeripheralNotifications.removeFirst()
         }
+    }
+
+    func configureSimulatedConnectionForTesting(
+        device: BLEDevice,
+        telemetry: BLETransferTelemetry,
+        transferHandler: @escaping (Data) async throws -> Data
+    ) {
+        connectedDevice = device
+        simulatedTelemetry = telemetry
+        simulatedTransferHandler = transferHandler
+        lastTransferTelemetry = nil
     }
 
     private func sendAckAsPeripheral(index: UInt32) {

@@ -3,12 +3,12 @@ import SwiftUI
 struct SyncView: View {
     @Environment(\.colorScheme) private var colorScheme
     @StateObject var viewModel: SyncViewModel
-    @State private var selectedConflict: SyncConflict?
     @State private var isProjectSelectionPresented = false
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 12) {
+            ScrollView {
+                LazyVStack(spacing: 12) {
                     Button {
                         viewModel.refreshProjectSelection()
                         isProjectSelectionPresented = true
@@ -20,6 +20,7 @@ struct SyncView: View {
                     .controlSize(.large)
                     .frame(maxWidth: .infinity)
                     .disabled(viewModel.connectedDevice == nil)
+                    .padding(.top, 4)
 
                     if !viewModel.statusMessage.isEmpty {
                         HStack {
@@ -38,9 +39,17 @@ struct SyncView: View {
                         VStack(alignment: .leading, spacing: 6) {
                             ProgressView(value: viewModel.progress)
                                 .progressViewStyle(.linear)
-                            Text("\(Int(viewModel.progress * 100))%")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                            HStack(alignment: .center, spacing: 8) {
+                                if !viewModel.statusMessage.isEmpty {
+                                    Text(LocalizedStringKey(viewModel.statusMessage))
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Text("\(Int(viewModel.progress * 100))%")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 10)
@@ -48,66 +57,18 @@ struct SyncView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                     }
 
-                    ScrollView {
-                        LazyVStack(spacing: 8) {
-                            ForEach(viewModel.devices) { device in
-                                deviceCard(device)
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-                    if !viewModel.conflicts.isEmpty {
-                        ScrollView {
-                            VStack(spacing: 8) {
-                                HStack {
-                                    Button("sync_accept_all_remote") {
-                                        viewModel.acceptAllConflicts()
-                                    }
-                                    .buttonStyle(.bordered)
-
-                                    Button("sync_keep_all_local") {
-                                        viewModel.keepAllLocalConflicts()
-                                    }
-                                    .buttonStyle(.bordered)
-
-                                    Button("sync_auto_select") {
-                                        viewModel.autoSelectByVersionRule()
-                                    }
-                                    .buttonStyle(.bordered)
-                                }
-
-                                Text(viewModel.conflictDecisionProgressText)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-
-                                ForEach(viewModel.conflicts) { conflict in
-                                    SyncConflictCardView(conflict: conflict, isUndecided: viewModel.isUndecided(conflict)) {
-                                        viewModel.acceptConflict(conflict)
-                                    } onReject: {
-                                        viewModel.rejectConflict(conflict)
-                                    }
-                                    .onTapGesture {
-                                        selectedConflict = conflict
-                                    }
-                                    Text(LocalizedStringKey(viewModel.decisionText(for: conflict)))
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-
-                                Button("sync_apply_decisions") {
-                                    Task { await viewModel.applyConflictDecisions() }
-                                }
-                                .buttonStyle(.borderedProminent)
-                                .disabled(!viewModel.allConflictsDecided)
-                            }
+                    LazyVStack(spacing: 8) {
+                        ForEach(viewModel.devices) { device in
+                            deviceCard(device)
                         }
                     }
+                    .frame(maxWidth: .infinity)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .padding()
-                .background(Color(.systemGroupedBackground))
+                .padding(.horizontal)
+                .padding(.bottom)
+            }
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("sync_title")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -123,12 +84,6 @@ struct SyncView: View {
                     }
                     .accessibilityLabel(Text(isScanning ? "sync_stop_button" : "sync_search_button"))
                 }
-            }
-            .sheet(item: $selectedConflict) { conflict in
-                ConflictDetailView(
-                    conflict: conflict,
-                    decisionText: viewModel.decisionText(for: conflict)
-                )
             }
             .sheet(isPresented: $isProjectSelectionPresented) {
                 NavigationStack {
@@ -213,12 +168,17 @@ struct SyncView: View {
     private func deviceCard(_ device: BLEDevice) -> some View {
         let isConnected = viewModel.connectedDevice?.id == device.id
 
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .top, spacing: 8) {
+        HStack(alignment: .center, spacing: 12) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(device.name)
                     .font(.headline)
                     .lineLimit(1)
-                Spacer()
+
+                Text(device.id.uuidString)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+
                 Label {
                     Text("\(device.signalStrength)")
                 } icon: {
@@ -228,23 +188,18 @@ struct SyncView: View {
                 .foregroundStyle(.secondary)
             }
 
-            Text(device.id.uuidString)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
+            Spacer()
 
-            HStack {
-                Spacer()
-                Button {
-                    viewModel.toggleDeviceConnection(device)
-                } label: {
-                    Image(systemName: isConnected ? "checkmark.circle.fill" : "link.circle.fill")
-                        .font(isConnected ? .title3 : .title2)
-                        .foregroundStyle(isConnected ? .green : Color.accentColor)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(Text(isConnected ? "sync_status_connected_to" : "sync_connect_button"))
+            Button {
+                viewModel.toggleDeviceConnection(device)
+            } label: {
+                Image(systemName: isConnected ? "checkmark.circle.fill" : "link.circle.fill")
+                    .font(.title)
+                    .foregroundStyle(isConnected ? .green : Color.accentColor)
+                    .frame(width: 42, height: 42)
             }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text(isConnected ? "sync_status_connected_to" : "sync_connect_button"))
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)

@@ -47,10 +47,13 @@ enum BalanceFilterOption: String, CaseIterable, Identifiable {
 
 @MainActor
 final class BalanceViewModel: ObservableObject {
+    private static let pageSize = 30
+
     @Published var balances: [ParticipantBalance] = []
     @Published var searchText = ""
     @Published var selectedSort: BalanceSortOption = .balanceDescending
     @Published var selectedFilter: BalanceFilterOption = .all
+    @Published private(set) var visibleBalancesLimit = pageSize
 
     private let repository: SharedFinanceRepository
     private let errorLogger: ErrorLogger
@@ -68,6 +71,8 @@ final class BalanceViewModel: ObservableObject {
                 self.load(projectID: self.currentProjectID)
             }
             .store(in: &cancellables)
+
+        setupPaginationResetSubscriptions()
     }
 
     func load(projectID: UUID?) {
@@ -75,6 +80,7 @@ final class BalanceViewModel: ObservableObject {
         let participants = repository.fetchParticipants(projectID: projectID)
         let expenses = repository.fetchExpenses(projectID: projectID)
         balances = BalanceCalculator.calculate(participants: participants, expenses: expenses)
+        visibleBalancesLimit = Self.pageSize
     }
 
     var filteredBalances: [ParticipantBalance] {
@@ -126,5 +132,81 @@ final class BalanceViewModel: ObservableObject {
         }
 
         return result
+    }
+
+    var visibleFilteredBalances: [ParticipantBalance] {
+        Array(filteredBalances.prefix(visibleBalancesLimit))
+    }
+
+    func loadMoreBalancesIfNeeded(currentItem: ParticipantBalance) {
+        guard let lastVisible = visibleFilteredBalances.last, lastVisible.id == currentItem.id else {
+            return
+        }
+        visibleBalancesLimit = min(visibleBalancesLimit + Self.pageSize, filteredBalances.count)
+    }
+
+    func participantHasExpenses(participantID: UUID) -> Bool {
+        repository.fetchExpenses(projectID: nil).contains { $0.participantID == participantID }
+    }
+
+    func deleteParticipant(participantID: UUID) {
+        guard let participant = repository.fetchParticipant(id: participantID) else {
+            return
+        }
+
+        let allProjects = repository.fetchProjects()
+        let linkedProjectIDs = Set(
+            allProjects
+                .filter { $0.participantIDs.contains(participantID) }
+                .map(\.id)
+        )
+        let expenseProjectIDs = Set(
+            repository
+                .fetchExpenses(projectID: nil)
+                .filter { $0.participantID == participantID }
+                .map(\.projectID)
+        )
+        let candidateProjectIDs = linkedProjectIDs.union(expenseProjectIDs)
+        let projectsToProcess = allProjects.filter { candidateProjectIDs.contains($0.id) }
+
+        var deletedFromAtLeastOneProject = false
+        if projectsToProcess.isEmpty {
+            let fallbackProjectID = allProjects.first?.id ?? UUID()
+            deletedFromAtLeastOneProject = repository.deleteParticipant(participant, projectID: fallbackProjectID)
+        } else {
+            for project in projectsToProcess {
+                let deleted = repository.deleteParticipant(participant, projectID: project.id)
+                deletedFromAtLeastOneProject = deletedFromAtLeastOneProject || deleted
+            }
+        }
+
+        guard deletedFromAtLeastOneProject else {
+            errorLogger.log("Unable to delete participant from balance: \(participant.name)")
+            return
+        }
+
+        repository.appendHistory(
+            ChangeHistoryEntry(
+                operationType: .delete,
+                actorName: "Local User",
+                description: "Deleted participant from balance: \(participant.name)",
+                recordVersion: participant.recordVersion + 1
+            )
+        )
+
+        load(projectID: currentProjectID)
+    }
+
+    private func setupPaginationResetSubscriptions() {
+        Publishers.CombineLatest3(
+            $searchText.removeDuplicates(),
+            $selectedSort.removeDuplicates(),
+            $selectedFilter.removeDuplicates()
+        )
+        .dropFirst()
+        .sink { [weak self] _, _, _ in
+            self?.visibleBalancesLimit = Self.pageSize
+        }
+        .store(in: &cancellables)
     }
 }
