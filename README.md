@@ -1,4 +1,4 @@
-# Short Finance for iOS
+# Shared-Finance-IOS
 
 Short description: iOS app for offline shared expense tracking with project-based accounting and Bluetooth sync.
 
@@ -34,7 +34,7 @@ Offline-first iOS app for shared expense tracking between multiple participants,
 
 ## Overview
 
-Short Finance helps groups manage shared spending without requiring a cloud backend. Instead of mixing everything into one ledger, the app uses a project-first model:
+Shared-Finance-IOS helps groups manage shared spending without requiring a cloud backend. Instead of mixing everything into one ledger, the app uses a project-first model:
 
 - each project has its own participants;
 - each project has its own expenses;
@@ -65,7 +65,7 @@ This approach is ideal when users manage multiple independent contexts in parall
 
 ## How Project-Scoped Sync Works
 
-Unlike traditional sync models that transfer entire datasets, Short Finance allows users to transfer only selected projects.
+Unlike traditional sync models that transfer entire datasets, Shared-Finance-IOS allows users to transfer only selected projects.
 
 Examples:
 

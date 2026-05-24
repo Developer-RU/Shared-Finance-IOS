@@ -1,8 +1,8 @@
-# Short Finance iOS Documentation
+# Shared-Finance-IOS Documentation
 
 ## 1. Product Purpose
 
-Short Finance for iOS is an offline-first shared expense tracking app designed for groups of people who need transparent accounting without mandatory cloud infrastructure.
+Shared-Finance-IOS is an offline-first shared expense tracking app designed for groups of people who need transparent accounting without mandatory cloud infrastructure.
 
 The product is built around **project-level accounting**. Each project is an isolated financial scope with its own participants, expenses, balances, and history.
 

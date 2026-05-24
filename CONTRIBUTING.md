@@ -1,6 +1,6 @@
-# Contributing to Short Finance iOS
+# Contributing to Shared-Finance-IOS
 
-Thank you for your interest in improving Short Finance for iOS.
+Thank you for your interest in improving Shared-Finance-IOS.
 
 ## Scope
 

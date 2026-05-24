@@ -1,8 +1,8 @@
-# Short Finance iOS Architecture
+# Shared-Finance-IOS Architecture
 
 ## Overview
 
-Short Finance iOS follows an offline-first architecture designed for shared expense tracking with project-level data isolation and selective BLE synchronization.
+Shared-Finance-IOS follows an offline-first architecture designed for shared expense tracking with project-level data isolation and selective BLE synchronization.
 
 ## Architectural style
 
