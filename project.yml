@@ -1,0 +1,59 @@
+name: SharedFinance
+options:
+  minimumXcodeGenVersion: 2.38.0
+settings:
+  SWIFT_VERSION: 5.10
+schemes:
+  SharedFinanceApp:
+    build:
+      targets:
+        SharedFinanceApp: all
+        SharedFinanceAppTests: [test]
+    test:
+      targets:
+        - name: SharedFinanceAppTests
+          parallelizable: false
+          randomExecutionOrder: false
+targets:
+  SharedFinanceApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: SharedFinanceApp
+        excludes:
+          - Tests
+    resources:
+      - SharedFinanceApp/Resources
+    info:
+      path: SharedFinanceApp/Resources/Info.plist
+      properties:
+        CFBundleDevelopmentRegion: en
+        CFBundleDisplayName: Shared Finance
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSBluetoothAlwaysUsageDescription: The app uses Bluetooth to synchronize data between nearby devices.
+        UILaunchStoryboardName: LaunchScreen
+        UIRequiresFullScreen: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.sharedfinance.ios
+      PRODUCT_NAME: SharedFinanceApp
+      MARKETING_VERSION: 1.0.1
+      CURRENT_PROJECT_VERSION: 2
+      TARGETED_DEVICE_FAMILY: 1
+      SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
+  SharedFinanceAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    hostApplication: SharedFinanceApp
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+    sources:
+      - SharedFinanceApp/Tests
+    dependencies:
+      - target: SharedFinanceApp

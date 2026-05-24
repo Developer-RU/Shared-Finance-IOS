@@ -1,0 +1,717 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0A47A67954D4D7D093B10B48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 86C3FF20638366C521A54697 /* Localizable.strings */; };
+		1F2A3B4C5D6E7F8091A2B3C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F2A3B4C5D6E7F8091A2B3C3 /* Assets.xcassets */; };
+		0BF8EBCF862489F5634655F6 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6863C2EF1CB44FBF90C0D7DC /* DatabaseManager.swift */; };
+		0C1F10BEDB52BFEC8751CE04 /* BalanceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92DF5B9DC93096CCA8181659 /* BalanceViewModel.swift */; };
+		0D6CB5652929241F177C0579 /* ParticipantsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AE3C7DA2BC6E8053229C2E2 /* ParticipantsViewModel.swift */; };
+		0DDBEC868FBCD906DA8678CD /* SyncServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A73BE8A9D41C5C09F983D66D /* SyncServiceTests.swift */; };
+		112E75E467AE25A02884085B /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A35202C1F6FE76D8C7F0C7D6 /* AppContainer.swift */; };
+		164A863A6060730624FF76C9 /* SharedFinanceRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B3E30655AC29D396A94FF2 /* SharedFinanceRepository.swift */; };
+		19CA30EF2EFCC4251499D4A9 /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1507C2393A69A400DAA7F77D /* History.swift */; };
+		1BC34DD4B313D93794DD0603 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = E464078C613BE9B51D9C1DBF /* Category.swift */; };
+		1E796F4EDC6548164C4B8704 /* ExpensesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9FC81A485E01971C2B48041 /* ExpensesView.swift */; };
+		211233F43C7DE5969E769DD0 /* SQLiteError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF279D7A5FDFB4782688DB2 /* SQLiteError.swift */; };
+		25F6044B3C458AB6FFFFDAA9 /* ExpenseRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C89D222F579DB8C466B060FB /* ExpenseRowView.swift */; };
+		276C906590B18613E760E24D /* MigrationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABBE78F711CDC7FB794E178 /* MigrationManager.swift */; };
+		2B59AA8F2F9C2EE4AE9D1BF7 /* HistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0452B59D4761AC80922ADD0 /* HistoryViewModel.swift */; };
+		2FA87D856AEC4317BCDD789E /* SyncModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81AB2B4BB61ED107A68D2FF1 /* SyncModels.swift */; };
+		3916B778973EACC6351AA449 /* ParticipantBalanceRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD5D515333B9817923A6390 /* ParticipantBalanceRowView.swift */; };
+		39AA600D8123E673F1E052D9 /* Decimal+Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A171D3ABC7A9D25BD3488B40 /* Decimal+Formatting.swift */; };
+		4FB9DEECED49260E3C425A6D /* BLEProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCDEFC74E231DDF43F196E4 /* BLEProtocolTests.swift */; };
+		5179D549E04BC57E9468CEC1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50EE561868FA27F76164271F /* SettingsView.swift */; };
+		555A8498FC1CD06151036B07 /* Expense.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD68087EC96214FD83B3562 /* Expense.swift */; };
+		6229FDDDA21967498419375A /* LocalSharedFinanceRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F6796F422AE29AE1FBB445 /* LocalSharedFinanceRepository.swift */; };
+		637717532576343201CFF46D /* BalanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B22B2C5B451A829A898FEA4 /* BalanceView.swift */; };
+		6B7961E787BC4AE187303187 /* SyncView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D68DC934E60406A05FF195 /* SyncView.swift */; };
+		6E752A839C7F042135840F6B /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 128FFD3E61E126FCE3CCC88A /* HistoryView.swift */; };
+		7893FAD19DA3C032AD79246B /* BackupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C909684D782D8FB8BF4FF7 /* BackupService.swift */; };
+		7914DBD716DBBA6312B05CCB /* BLEDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72FF75D3C7724CBE85F706B8 /* BLEDevice.swift */; };
+		799A9A98C450C5FE6D40FA80 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2761AA9A9D355C3480B4D4 /* SettingsViewModel.swift */; };
+		804B33D6E03320FF597DC223 /* SharedFinanceAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E864DD44173A68A78E0875C /* SharedFinanceAppTests.swift */; };
+		8FD2EA0CD18149A8F6EA10A7 /* BLEProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7588A063CE9B8F2D2027895 /* BLEProtocol.swift */; };
+		9DDDAD5018243E4A6A9FA2C4 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ED87819C5C4C217873A9052 /* Project.swift */; };
+		A0B181F5CAB79936FC6801BA /* Participant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 258D0C876AF8105E1433DBCE /* Participant.swift */; };
+		A2613453A43F89B537D7A2AA /* LoadingOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F6C9B2413362952FB23E84 /* LoadingOverlayView.swift */; };
+		A2B3D84E6A459E724B9FF038 /* RepositoryValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73B2601DBB6E7792BC812C4 /* RepositoryValidationTests.swift */; };
+		A5E3D7FA706C52AA1148087E /* ProjectsViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB35EB917DF5769416D9BE3 /* ProjectsViewModelTests.swift */; };
+		A66DF25A5285F9A23862178C /* BalanceCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10636E78BF36755D20A17E4 /* BalanceCalculatorTests.swift */; };
+		A80BAE092E72289E2040F5AB /* BLEManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAA7510275474D6DD3DE4F2 /* BLEManager.swift */; };
+		B145CB023106EEC19A6AAC11 /* SyncConflictCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B185898BC9A07CEEE7310F /* SyncConflictCardView.swift */; };
+		B1C7772264CDC21234C564D1 /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B767F2E69D811B8B0E65DFF /* RootTabView.swift */; };
+		B40253EAAB39F7C0DC1FD87B /* ProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A56A8BE24587B6F75E077C3 /* ProjectsView.swift */; };
+		B4E16BBF6742AE9E7A5FC384 /* ParticipantsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BC53F0DBB29A7BDC1A78BE /* ParticipantsView.swift */; };
+		B7B2B5B8E88D40B5269BF72D /* SyncEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D90636D3FF1A4E28B7515 /* SyncEngineTests.swift */; };
+		B987C493427D1AADA035F784 /* SharedFinanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52ACE6B0E89C8A6BF395153 /* SharedFinanceApp.swift */; };
+		C10CB2AE8FFE140AA1E9EBE3 /* Date+Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1145856C66755D41CC32CF0F /* Date+Formatting.swift */; };
+		C17411F5A9D4FF373808B01B /* ProjectsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DCB8A68B33D22041AB40DC /* ProjectsViewModel.swift */; };
+		C5D933D113C43E748EED7478 /* JSONBackupDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DDFDF69C48413903CC0356 /* JSONBackupDocument.swift */; };
+		C6959A78D3155910BF92CB24 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10B5DDBF5FFB15791484538 /* RootView.swift */; };
+		C7116238C4088B2D5FAE6B3C /* SyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E01BD4E4644BE1433E1ACEFF /* SyncService.swift */; };
+		CE25F480F20891B122F82B17 /* ErrorLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74CE93E9A294C2C215DF673B /* ErrorLogger.swift */; };
+		CE42553A3F135BD2EB3314D9 /* ProjectDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5235B47FC05A211C69A2DAB9 /* ProjectDetailView.swift */; };
+		CF4853DD94E90A1DAAEB5EE7 /* ProjectCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6493571FB502D240372FB702 /* ProjectCardView.swift */; };
+		D8934D6212DDF37E5D9F8CBD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5A9485322485635423C54130 /* LaunchScreen.storyboard */; };
+		DA7F23DF977AD4DE39660CFD /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C8A1B1501BCD64886BE0B1 /* AppState.swift */; };
+		DB3B350F11B57B69A873AA67 /* BalanceCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5622C6F42194F260BB133D /* BalanceCalculator.swift */; };
+		EB623C8C77DCF144CA7BBE84 /* Codable+JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6759404069505087AF700C2 /* Codable+JSON.swift */; };
+		FA5A647635499B373AE553A1 /* ConflictDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F64F2FAD493C2C10622ACF72 /* ConflictDetailView.swift */; };
+		FB801129067529A0A8108291 /* ExpensesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC3EA517C88820C64F6F4DF /* ExpensesViewModel.swift */; };
+		FCDD763AF24A07EEDFC8A4D6 /* SyncEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 980FBC912DEA18119BA6B447 /* SyncEngine.swift */; };
+		FF8B8166D4D9A9028C5F9A34 /* SyncViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C29391405A3BB06742A86996 /* SyncViewModel.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A2923F553D034D4E1A06198C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A383C36D036B2777B2F24228 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 72C5C218311DC35A3B12450E;
+			remoteInfo = SharedFinanceApp;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1F2A3B4C5D6E7F8091A2B3C3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0B22B2C5B451A829A898FEA4 /* BalanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalanceView.swift; sourceTree = "<group>"; };
+		0CD5D515333B9817923A6390 /* ParticipantBalanceRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantBalanceRowView.swift; sourceTree = "<group>"; };
+		1145856C66755D41CC32CF0F /* Date+Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Formatting.swift"; sourceTree = "<group>"; };
+		128FFD3E61E126FCE3CCC88A /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		1507C2393A69A400DAA7F77D /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
+		22BC53F0DBB29A7BDC1A78BE /* ParticipantsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantsView.swift; sourceTree = "<group>"; };
+		258D0C876AF8105E1433DBCE /* Participant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Participant.swift; sourceTree = "<group>"; };
+		2DD68087EC96214FD83B3562 /* Expense.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Expense.swift; sourceTree = "<group>"; };
+		35F6C9B2413362952FB23E84 /* LoadingOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingOverlayView.swift; sourceTree = "<group>"; };
+		3CCDEFC74E231DDF43F196E4 /* BLEProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEProtocolTests.swift; sourceTree = "<group>"; };
+		3F43DD70EB724B51A72ACE45 /* SharedFinanceApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SharedFinanceApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3F5D90636D3FF1A4E28B7515 /* SyncEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngineTests.swift; sourceTree = "<group>"; };
+		41FD2C04A14EA0D2D9BCD39E /* SharedFinanceAppTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SharedFinanceAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		462F820DD51FE6222CD17A43 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		48D68DC934E60406A05FF195 /* SyncView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncView.swift; sourceTree = "<group>"; };
+		4A56A8BE24587B6F75E077C3 /* ProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsView.swift; sourceTree = "<group>"; };
+		50EE561868FA27F76164271F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		5235B47FC05A211C69A2DAB9 /* ProjectDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectDetailView.swift; sourceTree = "<group>"; };
+		5A9485322485635423C54130 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		5BB35EB917DF5769416D9BE3 /* ProjectsViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsViewModelTests.swift; sourceTree = "<group>"; };
+		5E864DD44173A68A78E0875C /* SharedFinanceAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedFinanceAppTests.swift; sourceTree = "<group>"; };
+		63B185898BC9A07CEEE7310F /* SyncConflictCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncConflictCardView.swift; sourceTree = "<group>"; };
+		63DDFDF69C48413903CC0356 /* JSONBackupDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONBackupDocument.swift; sourceTree = "<group>"; };
+		6493571FB502D240372FB702 /* ProjectCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCardView.swift; sourceTree = "<group>"; };
+		6863C2EF1CB44FBF90C0D7DC /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+		72FF75D3C7724CBE85F706B8 /* BLEDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEDevice.swift; sourceTree = "<group>"; };
+		74CE93E9A294C2C215DF673B /* ErrorLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorLogger.swift; sourceTree = "<group>"; };
+		7AE3C7DA2BC6E8053229C2E2 /* ParticipantsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantsViewModel.swift; sourceTree = "<group>"; };
+		81AB2B4BB61ED107A68D2FF1 /* SyncModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncModels.swift; sourceTree = "<group>"; };
+		8ED87819C5C4C217873A9052 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
+		91F6796F422AE29AE1FBB445 /* LocalSharedFinanceRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalSharedFinanceRepository.swift; sourceTree = "<group>"; };
+		92DF5B9DC93096CCA8181659 /* BalanceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalanceViewModel.swift; sourceTree = "<group>"; };
+		954FB2466F453FD90A2D5C56 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		980FBC912DEA18119BA6B447 /* SyncEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngine.swift; sourceTree = "<group>"; };
+		9B767F2E69D811B8B0E65DFF /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
+		9C5622C6F42194F260BB133D /* BalanceCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalanceCalculator.swift; sourceTree = "<group>"; };
+		A10636E78BF36755D20A17E4 /* BalanceCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalanceCalculatorTests.swift; sourceTree = "<group>"; };
+		A171D3ABC7A9D25BD3488B40 /* Decimal+Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Decimal+Formatting.swift"; sourceTree = "<group>"; };
+		A35202C1F6FE76D8C7F0C7D6 /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
+		A4DCB8A68B33D22041AB40DC /* ProjectsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsViewModel.swift; sourceTree = "<group>"; };
+		A52ACE6B0E89C8A6BF395153 /* SharedFinanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedFinanceApp.swift; sourceTree = "<group>"; };
+		A73BE8A9D41C5C09F983D66D /* SyncServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncServiceTests.swift; sourceTree = "<group>"; };
+		B7588A063CE9B8F2D2027895 /* BLEProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEProtocol.swift; sourceTree = "<group>"; };
+		B8C909684D782D8FB8BF4FF7 /* BackupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupService.swift; sourceTree = "<group>"; };
+		B9FC81A485E01971C2B48041 /* ExpensesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpensesView.swift; sourceTree = "<group>"; };
+		BDC3EA517C88820C64F6F4DF /* ExpensesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpensesViewModel.swift; sourceTree = "<group>"; };
+		BFAA7510275474D6DD3DE4F2 /* BLEManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEManager.swift; sourceTree = "<group>"; };
+		C29391405A3BB06742A86996 /* SyncViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncViewModel.swift; sourceTree = "<group>"; };
+		C89D222F579DB8C466B060FB /* ExpenseRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseRowView.swift; sourceTree = "<group>"; };
+		CABBE78F711CDC7FB794E178 /* MigrationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationManager.swift; sourceTree = "<group>"; };
+		D0452B59D4761AC80922ADD0 /* HistoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewModel.swift; sourceTree = "<group>"; };
+		D10B5DDBF5FFB15791484538 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		D6759404069505087AF700C2 /* Codable+JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Codable+JSON.swift"; sourceTree = "<group>"; };
+		E01BD4E4644BE1433E1ACEFF /* SyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncService.swift; sourceTree = "<group>"; };
+		E1C8A1B1501BCD64886BE0B1 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		E464078C613BE9B51D9C1DBF /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		E73B2601DBB6E7792BC812C4 /* RepositoryValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryValidationTests.swift; sourceTree = "<group>"; };
+		E8B3E30655AC29D396A94FF2 /* SharedFinanceRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedFinanceRepository.swift; sourceTree = "<group>"; };
+		EAF279D7A5FDFB4782688DB2 /* SQLiteError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteError.swift; sourceTree = "<group>"; };
+		EE2761AA9A9D355C3480B4D4 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		F64F2FAD493C2C10622ACF72 /* ConflictDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConflictDetailView.swift; sourceTree = "<group>"; };
+		FCBEB0C3CC9AEFCA973D6329 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0E064C8BA2490F5DF6264378 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				B8C909684D782D8FB8BF4FF7 /* BackupService.swift */,
+				9C5622C6F42194F260BB133D /* BalanceCalculator.swift */,
+				74CE93E9A294C2C215DF673B /* ErrorLogger.swift */,
+				91F6796F422AE29AE1FBB445 /* LocalSharedFinanceRepository.swift */,
+				E8B3E30655AC29D396A94FF2 /* SharedFinanceRepository.swift */,
+				980FBC912DEA18119BA6B447 /* SyncEngine.swift */,
+				E01BD4E4644BE1433E1ACEFF /* SyncService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		3078A57C2F0BA8EDFE8C8C31 = {
+			isa = PBXGroup;
+			children = (
+				DEE132C16EC8BE0BD6B3B8E9 /* SharedFinanceApp */,
+				8C47A79286E5B3DE26489699 /* Tests */,
+				FCDB59EED76E25A2406AB74C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3C039717F4DD3893157710A7 /* BLE */ = {
+			isa = PBXGroup;
+			children = (
+				72FF75D3C7724CBE85F706B8 /* BLEDevice.swift */,
+				BFAA7510275474D6DD3DE4F2 /* BLEManager.swift */,
+				B7588A063CE9B8F2D2027895 /* BLEProtocol.swift */,
+			);
+			path = BLE;
+			sourceTree = "<group>";
+		};
+		49B64FD87A4EEAD8C6B56099 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0B22B2C5B451A829A898FEA4 /* BalanceView.swift */,
+				B9FC81A485E01971C2B48041 /* ExpensesView.swift */,
+				128FFD3E61E126FCE3CCC88A /* HistoryView.swift */,
+				22BC53F0DBB29A7BDC1A78BE /* ParticipantsView.swift */,
+				5235B47FC05A211C69A2DAB9 /* ProjectDetailView.swift */,
+				4A56A8BE24587B6F75E077C3 /* ProjectsView.swift */,
+				9B767F2E69D811B8B0E65DFF /* RootTabView.swift */,
+				50EE561868FA27F76164271F /* SettingsView.swift */,
+				48D68DC934E60406A05FF195 /* SyncView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4B15DE82964B72643EBD22AF /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				E464078C613BE9B51D9C1DBF /* Category.swift */,
+				2DD68087EC96214FD83B3562 /* Expense.swift */,
+				1507C2393A69A400DAA7F77D /* History.swift */,
+				258D0C876AF8105E1433DBCE /* Participant.swift */,
+				8ED87819C5C4C217873A9052 /* Project.swift */,
+				81AB2B4BB61ED107A68D2FF1 /* SyncModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		8C47A79286E5B3DE26489699 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				A10636E78BF36755D20A17E4 /* BalanceCalculatorTests.swift */,
+				3CCDEFC74E231DDF43F196E4 /* BLEProtocolTests.swift */,
+				5BB35EB917DF5769416D9BE3 /* ProjectsViewModelTests.swift */,
+				E73B2601DBB6E7792BC812C4 /* RepositoryValidationTests.swift */,
+				5E864DD44173A68A78E0875C /* SharedFinanceAppTests.swift */,
+				3F5D90636D3FF1A4E28B7515 /* SyncEngineTests.swift */,
+				A73BE8A9D41C5C09F983D66D /* SyncServiceTests.swift */,
+			);
+			name = Tests;
+			path = SharedFinanceApp/Tests;
+			sourceTree = "<group>";
+		};
+		91F6E35B99C48038B55A3D88 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				D6759404069505087AF700C2 /* Codable+JSON.swift */,
+				1145856C66755D41CC32CF0F /* Date+Formatting.swift */,
+				A171D3ABC7A9D25BD3488B40 /* Decimal+Formatting.swift */,
+				63DDFDF69C48413903CC0356 /* JSONBackupDocument.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		AA2C3768DBD35E7D89801AC0 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				92DF5B9DC93096CCA8181659 /* BalanceViewModel.swift */,
+				BDC3EA517C88820C64F6F4DF /* ExpensesViewModel.swift */,
+				D0452B59D4761AC80922ADD0 /* HistoryViewModel.swift */,
+				7AE3C7DA2BC6E8053229C2E2 /* ParticipantsViewModel.swift */,
+				A4DCB8A68B33D22041AB40DC /* ProjectsViewModel.swift */,
+				EE2761AA9A9D355C3480B4D4 /* SettingsViewModel.swift */,
+				C29391405A3BB06742A86996 /* SyncViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		AA3A32FF98017731CE747E48 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				954FB2466F453FD90A2D5C56 /* Info.plist */,
+				5A9485322485635423C54130 /* LaunchScreen.storyboard */,
+				1F2A3B4C5D6E7F8091A2B3C3 /* Assets.xcassets */,
+				86C3FF20638366C521A54697 /* Localizable.strings */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		AAC0BF4D074FE61578672CE6 /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				6863C2EF1CB44FBF90C0D7DC /* DatabaseManager.swift */,
+				CABBE78F711CDC7FB794E178 /* MigrationManager.swift */,
+				EAF279D7A5FDFB4782688DB2 /* SQLiteError.swift */,
+			);
+			path = Database;
+			sourceTree = "<group>";
+		};
+		DEE132C16EC8BE0BD6B3B8E9 /* SharedFinanceApp */ = {
+			isa = PBXGroup;
+			children = (
+				A35202C1F6FE76D8C7F0C7D6 /* AppContainer.swift */,
+				E1C8A1B1501BCD64886BE0B1 /* AppState.swift */,
+				D10B5DDBF5FFB15791484538 /* RootView.swift */,
+				A52ACE6B0E89C8A6BF395153 /* SharedFinanceApp.swift */,
+				3C039717F4DD3893157710A7 /* BLE */,
+				F1D96B3EA5A5A5ED557BB7E9 /* Components */,
+				AAC0BF4D074FE61578672CE6 /* Database */,
+				4B15DE82964B72643EBD22AF /* Models */,
+				AA3A32FF98017731CE747E48 /* Resources */,
+				0E064C8BA2490F5DF6264378 /* Services */,
+				91F6E35B99C48038B55A3D88 /* Utils */,
+				AA2C3768DBD35E7D89801AC0 /* ViewModels */,
+				49B64FD87A4EEAD8C6B56099 /* Views */,
+			);
+			path = SharedFinanceApp;
+			sourceTree = "<group>";
+		};
+		F1D96B3EA5A5A5ED557BB7E9 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				F64F2FAD493C2C10622ACF72 /* ConflictDetailView.swift */,
+				C89D222F579DB8C466B060FB /* ExpenseRowView.swift */,
+				35F6C9B2413362952FB23E84 /* LoadingOverlayView.swift */,
+				0CD5D515333B9817923A6390 /* ParticipantBalanceRowView.swift */,
+				6493571FB502D240372FB702 /* ProjectCardView.swift */,
+				63B185898BC9A07CEEE7310F /* SyncConflictCardView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		FCDB59EED76E25A2406AB74C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3F43DD70EB724B51A72ACE45 /* SharedFinanceApp.app */,
+				41FD2C04A14EA0D2D9BCD39E /* SharedFinanceAppTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		39B71910AE08BEABF0D3BB90 /* SharedFinanceAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BBF160EE334FB5D70E761B08 /* Build configuration list for PBXNativeTarget "SharedFinanceAppTests" */;
+			buildPhases = (
+				3C9474C8AA2528F3F5F0811E /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				90EB69860F9BDEDC5BBA0449 /* PBXTargetDependency */,
+			);
+			name = SharedFinanceAppTests;
+			packageProductDependencies = (
+			);
+			productName = SharedFinanceAppTests;
+			productReference = 41FD2C04A14EA0D2D9BCD39E /* SharedFinanceAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		72C5C218311DC35A3B12450E /* SharedFinanceApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C4FEEA7E58124861A73CACD6 /* Build configuration list for PBXNativeTarget "SharedFinanceApp" */;
+			buildPhases = (
+				9DE2BED4ADF165177EE1BDEF /* Sources */,
+				3F0C89971347766098D78B7F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SharedFinanceApp;
+			packageProductDependencies = (
+			);
+			productName = SharedFinanceApp;
+			productReference = 3F43DD70EB724B51A72ACE45 /* SharedFinanceApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A383C36D036B2777B2F24228 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+			};
+			buildConfigurationList = 2A8FC14477ADBFE5C765770A /* Build configuration list for PBXProject "SharedFinance" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+				ru,
+			);
+			mainGroup = 3078A57C2F0BA8EDFE8C8C31;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = FCDB59EED76E25A2406AB74C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				72C5C218311DC35A3B12450E /* SharedFinanceApp */,
+				39B71910AE08BEABF0D3BB90 /* SharedFinanceAppTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3F0C89971347766098D78B7F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8934D6212DDF37E5D9F8CBD /* LaunchScreen.storyboard in Resources */,
+				1F2A3B4C5D6E7F8091A2B3C4 /* Assets.xcassets in Resources */,
+				0A47A67954D4D7D093B10B48 /* Localizable.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3C9474C8AA2528F3F5F0811E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4FB9DEECED49260E3C425A6D /* BLEProtocolTests.swift in Sources */,
+				A66DF25A5285F9A23862178C /* BalanceCalculatorTests.swift in Sources */,
+				A5E3D7FA706C52AA1148087E /* ProjectsViewModelTests.swift in Sources */,
+				A2B3D84E6A459E724B9FF038 /* RepositoryValidationTests.swift in Sources */,
+				804B33D6E03320FF597DC223 /* SharedFinanceAppTests.swift in Sources */,
+				B7B2B5B8E88D40B5269BF72D /* SyncEngineTests.swift in Sources */,
+				0DDBEC868FBCD906DA8678CD /* SyncServiceTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9DE2BED4ADF165177EE1BDEF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				112E75E467AE25A02884085B /* AppContainer.swift in Sources */,
+				DA7F23DF977AD4DE39660CFD /* AppState.swift in Sources */,
+				7914DBD716DBBA6312B05CCB /* BLEDevice.swift in Sources */,
+				A80BAE092E72289E2040F5AB /* BLEManager.swift in Sources */,
+				8FD2EA0CD18149A8F6EA10A7 /* BLEProtocol.swift in Sources */,
+				7893FAD19DA3C032AD79246B /* BackupService.swift in Sources */,
+				DB3B350F11B57B69A873AA67 /* BalanceCalculator.swift in Sources */,
+				637717532576343201CFF46D /* BalanceView.swift in Sources */,
+				0C1F10BEDB52BFEC8751CE04 /* BalanceViewModel.swift in Sources */,
+				1BC34DD4B313D93794DD0603 /* Category.swift in Sources */,
+				EB623C8C77DCF144CA7BBE84 /* Codable+JSON.swift in Sources */,
+				FA5A647635499B373AE553A1 /* ConflictDetailView.swift in Sources */,
+				0BF8EBCF862489F5634655F6 /* DatabaseManager.swift in Sources */,
+				C10CB2AE8FFE140AA1E9EBE3 /* Date+Formatting.swift in Sources */,
+				39AA600D8123E673F1E052D9 /* Decimal+Formatting.swift in Sources */,
+				CE25F480F20891B122F82B17 /* ErrorLogger.swift in Sources */,
+				555A8498FC1CD06151036B07 /* Expense.swift in Sources */,
+				25F6044B3C458AB6FFFFDAA9 /* ExpenseRowView.swift in Sources */,
+				1E796F4EDC6548164C4B8704 /* ExpensesView.swift in Sources */,
+				FB801129067529A0A8108291 /* ExpensesViewModel.swift in Sources */,
+				19CA30EF2EFCC4251499D4A9 /* History.swift in Sources */,
+				6E752A839C7F042135840F6B /* HistoryView.swift in Sources */,
+				2B59AA8F2F9C2EE4AE9D1BF7 /* HistoryViewModel.swift in Sources */,
+				C5D933D113C43E748EED7478 /* JSONBackupDocument.swift in Sources */,
+				A2613453A43F89B537D7A2AA /* LoadingOverlayView.swift in Sources */,
+				6229FDDDA21967498419375A /* LocalSharedFinanceRepository.swift in Sources */,
+				276C906590B18613E760E24D /* MigrationManager.swift in Sources */,
+				A0B181F5CAB79936FC6801BA /* Participant.swift in Sources */,
+				3916B778973EACC6351AA449 /* ParticipantBalanceRowView.swift in Sources */,
+				B4E16BBF6742AE9E7A5FC384 /* ParticipantsView.swift in Sources */,
+				0D6CB5652929241F177C0579 /* ParticipantsViewModel.swift in Sources */,
+				9DDDAD5018243E4A6A9FA2C4 /* Project.swift in Sources */,
+				CF4853DD94E90A1DAAEB5EE7 /* ProjectCardView.swift in Sources */,
+				CE42553A3F135BD2EB3314D9 /* ProjectDetailView.swift in Sources */,
+				B40253EAAB39F7C0DC1FD87B /* ProjectsView.swift in Sources */,
+				C17411F5A9D4FF373808B01B /* ProjectsViewModel.swift in Sources */,
+				B1C7772264CDC21234C564D1 /* RootTabView.swift in Sources */,
+				C6959A78D3155910BF92CB24 /* RootView.swift in Sources */,
+				211233F43C7DE5969E769DD0 /* SQLiteError.swift in Sources */,
+				5179D549E04BC57E9468CEC1 /* SettingsView.swift in Sources */,
+				799A9A98C450C5FE6D40FA80 /* SettingsViewModel.swift in Sources */,
+				B987C493427D1AADA035F784 /* SharedFinanceApp.swift in Sources */,
+				164A863A6060730624FF76C9 /* SharedFinanceRepository.swift in Sources */,
+				B145CB023106EEC19A6AAC11 /* SyncConflictCardView.swift in Sources */,
+				FCDD763AF24A07EEDFC8A4D6 /* SyncEngine.swift in Sources */,
+				2FA87D856AEC4317BCDD789E /* SyncModels.swift in Sources */,
+				C7116238C4088B2D5FAE6B3C /* SyncService.swift in Sources */,
+				6B7961E787BC4AE187303187 /* SyncView.swift in Sources */,
+				FF8B8166D4D9A9028C5F9A34 /* SyncViewModel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		90EB69860F9BDEDC5BBA0449 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 72C5C218311DC35A3B12450E /* SharedFinanceApp */;
+			targetProxy = A2923F553D034D4E1A06198C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		86C3FF20638366C521A54697 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				462F820DD51FE6222CD17A43 /* en */,
+				FCBEB0C3CC9AEFCA973D6329 /* ru */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		117027398EDD5683146611FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = VK5PTZ6599;
+				INFOPLIST_FILE = SharedFinanceApp/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sharedfinance.ios;
+				PRODUCT_NAME = SharedFinanceApp;
+				SDKROOT = iphoneos;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		1DA42410921F0200E1DE9D1B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.1;
+			};
+			name = Release;
+		};
+		20D28A90773FDC0192153457 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.1;
+			};
+			name = Debug;
+		};
+		38B5D92A45BFBBE698D9CE96 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SharedFinanceApp.app/SharedFinanceApp";
+			};
+			name = Release;
+		};
+		A8D67AF6F542E4251C0BF17F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = VK5PTZ6599;
+				INFOPLIST_FILE = SharedFinanceApp/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sharedfinance.ios;
+				PRODUCT_NAME = SharedFinanceApp;
+				SDKROOT = iphoneos;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		C83052188B58000EABE7E2F2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SharedFinanceApp.app/SharedFinanceApp";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2A8FC14477ADBFE5C765770A /* Build configuration list for PBXProject "SharedFinance" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				20D28A90773FDC0192153457 /* Debug */,
+				1DA42410921F0200E1DE9D1B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BBF160EE334FB5D70E761B08 /* Build configuration list for PBXNativeTarget "SharedFinanceAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C83052188B58000EABE7E2F2 /* Debug */,
+				38B5D92A45BFBBE698D9CE96 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C4FEEA7E58124861A73CACD6 /* Build configuration list for PBXNativeTarget "SharedFinanceApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				117027398EDD5683146611FD /* Debug */,
+				A8D67AF6F542E4251C0BF17F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A383C36D036B2777B2F24228 /* Project object */;
+}
